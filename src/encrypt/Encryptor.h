@@ -8,7 +8,10 @@
  *   *ERB 01/06/18 - Created
  */
 
-static class Encryptor
+#ifndef ENCRYPTOR_H
+#define ENCRYPTOR_H
+
+class Encryptor
 {
   private:
     // Fields
@@ -16,5 +19,7 @@ static class Encryptor
 
   public:
     // Methods
-    static void Monoalphabetic(string* message);
-}
+    static std::string Monoalphabetic(std::string message);
+};
+
+#endif // ENCRYPTOR_H

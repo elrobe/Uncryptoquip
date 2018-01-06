@@ -10,7 +10,10 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <cstdlib>
+
+#include "../encrypt/Encryptor.h"
 
 using namespace std;
 
@@ -40,11 +43,12 @@ Option GetOption()
 
     Menu();
     cin >> input;
-
+    // Convert the input into an integer using a string stream
     stringstream s( input );
     s >> option;
-    showErr = true;
-    
+
+    showErr = true; // Always show the error after the first attempt
+
   } while ( option != 1 && option != 2 );
 
   return (Option) option;
@@ -63,4 +67,6 @@ int main( int argc, char** argv )
     cout << "You picked Decryptor" << endl;
   else
     cout << "Not sure what you picked..." << endl;
+
+    return 0;
 }
