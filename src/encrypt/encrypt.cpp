@@ -16,41 +16,71 @@
 using namespace std;
 
 // Globals
-const char NULL_CHAR = '\0';
-const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const size_t ALPHA_LENGTH = ALPHABET.length();
-string USED =           "                          ";
-size_t USED_COUNT = 0;
+string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+string MAP =      "                          ";
+
+// Not currently used; will turn on/off the ability to encrypt a letter
+// to itself. E.g. I -> I
+bool SAME_LETTER_ENCRYPTION_ON = false;
 
 /*
  * ToUpper
- * Takes in any old string and returns a version of it with every
- * alphabetic character in upper-case.
+ * Modifies the input string, making all alphabetic characters upper-case.
  */
-string ToUpper(string s)
+void ToUpper(string* s)
 {
-  string out;
-  for ( size_t i = 0; i < s.length(); i++ )
-    out += toupper( s[i] );
-
-  return out;
+  for ( size_t i = 0; i < (*s).length(); i++ )
+    ((*s)[i]) = toupper( ((*s)[i]) );
 }
 
 /*
- * GetLetter
+ * ToMap
+ * Translates an uppercase letter to an index into the map, based on the
+ * position of the letter in the alphabet.
+ * All non-uppercase alphabetic letters will return -1.
+ */
+int ToMap(char c)
+{
+  if ( c >= 'A' && c <= 'Z' )
+    return c - 'A'; // Map A-Z, uppercase only
+  return -1;
+}
+
+/*
+ * MapLetter
  * Takes in a random integer value and returns a random letter that
  * hasn't been used yet for the encryption.
  */
-char GetLetter(int r)
+char MapLetter(char oldVal)
 {
-  int idx = r % ALPHA_LENGTH; // 26 possible letters
-  if ( USED[idx] != ' ' )
-    return NULL_CHAR;
+  // Turn the old value into an index into the map based on it's position
+  // in the alphabet.
+  int idx = ToMap( oldVal );
+  if ( idx == -1 )
+    return oldVal; // Return the character if non-alphabetic
 
-  char c = ALPHABET[idx];
-  USED[idx] = c;
-  USED_COUNT++;
-  return c;
+  // See if a new letter has been mapped to the old letter yet.
+  char newVal = MAP[idx];
+  if ( newVal != ' ' )
+    return newVal;
+
+  // If we don't have a mapping yet, create it and remove the newly
+  // mapped character from the list of possible characters.
+  int randIdx = rand() % ALPHABET.length();
+
+  if ( SAME_LETTER_ENCRYPTION_ON )
+  {
+    // Not used yet
+  }
+
+  newVal = ALPHABET[randIdx];
+  MAP[idx] = newVal;
+  ALPHABET.replace( randIdx, 1, "" ); // Remove the letter from the alphabet
+
+  // Debug printout for the mapping
+  //cout << "Mapping " << oldVal << " -> " << newVal << endl;
+
+  return newVal;
 }
 
 /*
@@ -61,54 +91,25 @@ int main( int argc, char** argv )
 {
   // Replace this with taking in user input, a text file, etc.
   string input = "a young male deer was running around trying to catch others. I presume they were playing stag.";
-  input = ToUpper( input );
+  ToUpper( &input );
 
-  cerr << input << endl << endl;
+  //cerr << input << endl << endl;
 
   size_t length = input.length();
   srand( time(NULL) ); // Use the time as a random number seed
 
   // Generate the blank output string
   char* output = new char[length];
-  for ( size_t i = 0; i < length; i++ )
-    output[i] = ' ';
 
   // Randomize!
   for ( size_t i = 0; i < length; i++ )
   {
-    if ( USED_COUNT == ALPHA_LENGTH )
-      break;
-
-    char replace = input[i]; // Character to replace
-
-    // Skip already determined letters
-    if ( output[i] != ' ' )
-      continue;
-
-    // Skip all non-alphabetic characters
-    if ( !isalpha(replace) )
-    {
-      output[i] = replace;
-      continue;
-    }
-
-    // Get a random letter to replace with
-    char cur = NULL_CHAR;
-    while ( cur == NULL_CHAR )
-      cur = GetLetter( rand() );
-
-    // Debug printout of the mapping
-    //cerr << replace << " -> " << cur << endl;
-
-    // Replace all later instances of the letter
-    for ( size_t j = i; j < input.length(); j++ )
-    {
-      if ( input[j] == replace )
-        output[j] = cur;
-    }
+    char oldVal = input[i]; // Character to replace
+    char newVal = MapLetter( oldVal );
+    output[i] = newVal;
   }
 
-  // Output the crypoquip
+  // Replace this with output matching the input method
   cout << output << endl << endl;
   delete output;
 
