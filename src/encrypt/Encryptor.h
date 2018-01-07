@@ -2,7 +2,6 @@
  * Encryptor.h
  *
  * Header file for the Encryptor class.
- * This is a static class that encrypts a message with one of
  *
  * History:
  *   *ERB 01/06/18 - Created
@@ -11,15 +10,28 @@
 #ifndef ENCRYPTOR_H
 #define ENCRYPTOR_H
 
+#include "../shared/Message.h"
+
 class Encryptor
 {
-  private:
+  protected:
     // Fields
-    bool ENABLE_SAME_LETTER;
+    Message* _message;
+    Message* _encryptedMessage;
 
   public:
+    // Constructors
+    Encryptor(Message* message);
+
+    // Destructor
+    ~Encryptor();
+
     // Methods
-    static std::string Monoalphabetic(std::string message);
+    virtual void Encrypt();
+
+    const Message* GetMessage();
+
+    const Message* GetEncryptedMessage();
 };
 
 #endif // ENCRYPTOR_H

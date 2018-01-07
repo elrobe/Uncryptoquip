@@ -68,10 +68,10 @@ char MapLetter(char oldVal)
   // mapped character from the list of possible characters.
   int randIdx = rand() % ALPHABET.length();
 
-  if ( SAME_LETTER_ENCRYPTION_ON )
-  {
+  //if ( SAME_LETTER_ENCRYPTION_ON )
+  //{
     // Not used yet
-  }
+  //}
 
   newVal = ALPHABET[randIdx];
   MAP[idx] = newVal;
